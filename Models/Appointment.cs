@@ -18,14 +18,21 @@ namespace advent_appointment_booking.Models
         [ForeignKey("Driver")]
         public int DriverId { get; set; }
 
+        [Required]
         public string MoveType { get; set; }
+        [Required]
         public string ContainerNumber { get; set; }
+        [Required]
         public string SizeType { get; set; }
+        [Required]
         public string Line { get; set; }
         public string ChassisNo { get; set; }
         public string AppointmentStatus { get; set; }
+        [Required]
         public DateTime AppointmentCreated { get; set; }
+        [Required]
         public DateTime AppointmentValidThrough { get; set; }
+        [Required]
         public DateTime AppointmentLastModified { get; set; }
         public string GateCode { get; set; }
 
