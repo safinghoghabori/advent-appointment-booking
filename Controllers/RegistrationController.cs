@@ -1,5 +1,6 @@
 ﻿using advent_appointment_booking.Models;
 using advent_appointment_booking.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace advent_appointment_booking.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class RegistrationController : ControllerBase
     {
         private readonly IRegistrationService _registrationService;
