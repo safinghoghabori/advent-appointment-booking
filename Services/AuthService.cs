@@ -31,7 +31,7 @@ namespace advent_appointment_booking.Services
 
                 if (company == null)
                 {
-                    throw new Exception("Invalid credentials for Trucking Company.");
+                    throw new Exception("Invalid credentials.");
                 }
 
                 return company; 
@@ -55,7 +55,7 @@ namespace advent_appointment_booking.Services
 
                 if (terminal == null)
                 {
-                    throw new Exception("Invalid credentials for Terminal.");
+                    throw new Exception("Invalid credentials.");
                 }
 
                 return terminal; 

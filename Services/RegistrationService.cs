@@ -21,8 +21,6 @@ namespace advent_appointment_booking.Services
                 throw new Exception("Email already exists.");
             }
 
-            // Any other custom validation or pre-processing can be added here
-
             // Add company to the database
             _databaseContext.TruckingCompanies.Add(company);
             await _databaseContext.SaveChangesAsync();
@@ -37,8 +35,6 @@ namespace advent_appointment_booking.Services
             {
                 throw new Exception("Email already exists.");
             }
-
-            // Any other custom validation or pre-processing can be added here
 
             // Add terminal to the database
             _databaseContext.Terminals.Add(terminal);
