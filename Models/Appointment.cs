@@ -36,8 +36,8 @@ namespace advent_appointment_booking.Models
         public DateTime AppointmentLastModified { get; set; }
         public string GateCode { get; set; }
 
-        public TruckingCompany TruckingCompany { get; set; }
-        public Terminal Terminal { get; set; }
-        public Driver Driver { get; set; }
+        public TruckingCompany? TruckingCompany { get; set; }
+        public Terminal? Terminal { get; set; }
+        public Driver? Driver { get; set; }
     }
 }

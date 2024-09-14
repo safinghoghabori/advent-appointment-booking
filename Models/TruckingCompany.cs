@@ -11,7 +11,7 @@ namespace advent_appointment_booking.Models
 
         [Required]  
         [MaxLength(200)]  
-        public string CompanyName { get; set; }
+        public string TrCompanyName { get; set; }
 
         [MaxLength(50)]
         public string GstNo { get; set; }
@@ -25,9 +25,11 @@ namespace advent_appointment_booking.Models
 
         [Required]
         public string Password { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        public ICollection<Appointment> Appointments { get; set; }
-        public ICollection<Driver> Drivers { get; set; }
+        public ICollection<Appointment>? Appointments { get; set; }
+        public ICollection<Driver>? Drivers { get; set; }
 
     }
 }
