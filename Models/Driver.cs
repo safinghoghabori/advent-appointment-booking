@@ -15,7 +15,7 @@ namespace advent_appointment_booking.Models
         public string PlateNo { get; set; }
         public string PhoneNumber { get; set; }
 
-        public TruckingCompany TruckingCompany { get; set; }
-        public ICollection<Appointment> Appointments { get; set; }
+        public TruckingCompany? TruckingCompany { get; set; }
+        public ICollection<Appointment>? Appointments { get; set; }
     }
 }
