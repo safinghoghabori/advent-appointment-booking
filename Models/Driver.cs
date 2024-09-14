@@ -11,9 +11,6 @@ namespace advent_appointment_booking.Models
         [ForeignKey("TruckingCompany")]  
         public int TrCompanyId { get; set; }
 
-        [ForeignKey("Appointment")]  
-        public int AppointmentId { get; set; }
-
         public string DriverName { get; set; }
         public string PlateNo { get; set; }
         public string PhoneNumber { get; set; }

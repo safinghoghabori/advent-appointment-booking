@@ -27,5 +27,7 @@ namespace advent_appointment_booking.Models
         public string Password { get; set; }
 
         public ICollection<Appointment> Appointments { get; set; }
+        public ICollection<Driver> Drivers { get; set; }
+
     }
 }
