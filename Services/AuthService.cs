@@ -1,4 +1,5 @@
 ﻿using advent_appointment_booking.Database;
+using advent_appointment_booking.Enums;
 using advent_appointment_booking.Helpers;
 using Azure.Core;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,7 @@ namespace advent_appointment_booking.Services
     
         public async Task<object> LoginAsync(string email, string password, string userType)
         {
-            if (userType == "TruckingCompany")
+            if (userType == UserType.TruckingCompany)
             {
                 var trCompany = await _databaseContext.TruckingCompanies
                     .Where(tc => tc.Email == email && tc.Password == password)
@@ -41,7 +42,7 @@ namespace advent_appointment_booking.Services
                 var token = _jwtTokenGenerator.GenerateToken(email, userType);
                 return new {data = trCompany, token}; 
             }
-            else if (userType == "Terminal")
+            else if (userType == UserType.Terminal)
             {
                 var terminal = await _databaseContext.Terminals
                     .Where(t => t.Email == email && t.Password == password)

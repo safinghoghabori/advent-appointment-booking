@@ -1,4 +1,5 @@
 using advent_appointment_booking.Database;
+using advent_appointment_booking.Enums;
 using advent_appointment_booking.Helpers;
 using advent_appointment_booking.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -55,8 +56,10 @@ builder.Services.AddAuthentication(options =>
 // Add Authorization policies
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("RequireTruckingCompanyRole", policy => policy.RequireClaim("Role", "TruckingCompany"));
-    options.AddPolicy("RequireTerminalRole", policy => policy.RequireClaim("Role", "Terminal"));
+    options.AddPolicy(Policy.RequireTruckingCompanyRole, policy => policy.RequireClaim("Role", UserType.TruckingCompany));
+    options.AddPolicy(Policy.RequireTerminalRole, policy => policy.RequireClaim("Role", UserType.Terminal));
+    options.AddPolicy(Policy.RequireTruckingCompanyOrTerminalRole, policy => policy.RequireAssertion(context => context.User.HasClaim(c => c.Type == "Role" && (c.Value == UserType.TruckingCompany || c.Value == UserType.Terminal)))
+                );
 });
 
 var app = builder.Build();

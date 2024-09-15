@@ -1,5 +1,7 @@
-﻿using advent_appointment_booking.Models;
+﻿using advent_appointment_booking.Enums;
+using advent_appointment_booking.Models;
 using advent_appointment_booking.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace advent_appointment_booking.Controllers
@@ -15,8 +17,8 @@ namespace advent_appointment_booking.Controllers
             _appointmentService = appointmentService;
         }
 
-        // Create appointment (Trucking Company only)
         [HttpPost("create")]
+        [Authorize(Policy = Policy.RequireTruckingCompanyRole)]
         public async Task<IActionResult> CreateAppointment([FromBody] Appointment appointment)
         {
             try
@@ -30,8 +32,8 @@ namespace advent_appointment_booking.Controllers
             }
         }
 
-        // Update appointment (Trucking Company only)
         [HttpPut("update/{appointmentId}")]
+        [Authorize(Policy = Policy.RequireTruckingCompanyRole)]
         public async Task<IActionResult> UpdateAppointment(int appointmentId, [FromBody] Appointment appointment)
         {
             try
@@ -45,8 +47,8 @@ namespace advent_appointment_booking.Controllers
             }
         }
 
-        // Get single appointment (Both Trucking Company and Terminal)
         [HttpGet("get/{appointmentId}")]
+        [Authorize(Policy = Policy.RequireTruckingCompanyOrTerminalRole)]
         public async Task<IActionResult> GetAppointment(int appointmentId)
         {
             try
@@ -59,16 +61,16 @@ namespace advent_appointment_booking.Controllers
             }
         }
 
-        // Get all appointments (Both Trucking Company and Terminal)
         [HttpGet("get-all")]
+        [Authorize(Policy = Policy.RequireTruckingCompanyOrTerminalRole)]
         public async Task<IActionResult> GetAppointments()
         {
             var result = await _appointmentService.GetAppointments();
             return Ok(result);
         }
 
-        // Delete appointment (Trucking Company only)
         [HttpDelete("delete/{appointmentId}")]
+        [Authorize(Policy = Policy.RequireTruckingCompanyRole)]
         public async Task<IActionResult> DeleteAppointment(int appointmentId)
         {
             try
@@ -82,8 +84,8 @@ namespace advent_appointment_booking.Controllers
             }
         }
 
-        // Cancel appointment (Terminal only)
         [HttpPut("cancel/{appointmentId}")]
+        [Authorize(Policy = Policy.RequireTerminalRole)]
         public async Task<IActionResult> CancelAppointment(int appointmentId)
         {
             try

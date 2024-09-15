@@ -29,6 +29,12 @@ namespace advent_appointment_booking.Services
             if (driver == null)
                 throw new Exception("Driver does not exists.");
 
+            var isContainerAlreadyScheduled = await _databaseContext.Appointments.AnyAsync(a => a.ContainerNumber == appointment.ContainerNumber);
+            if(isContainerAlreadyScheduled)
+            {
+                throw new Exception("Appointment for entered container number is already exists.");
+            }
+
             // Generate custom gate code: first two letters of Trucking Company + first three digits of Terminal ID
             string gateCode = $"{truckingCompany.TrCompanyName.Substring(0, 2).ToUpper()}{terminal.TerminalId.ToString().PadLeft(3, '0')}";
             appointment.GateCode = gateCode;
