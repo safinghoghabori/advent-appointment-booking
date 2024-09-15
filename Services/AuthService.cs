@@ -1,4 +1,6 @@
 ﻿using advent_appointment_booking.Database;
+using advent_appointment_booking.Helpers;
+using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace advent_appointment_booking.Services
@@ -6,35 +8,38 @@ namespace advent_appointment_booking.Services
     public class AuthService : IAuthService
     {
         private readonly ApplicationDbContext _databaseContext;
+        private readonly JwtTokenGenerator _jwtTokenGenerator;
 
-        public AuthService(ApplicationDbContext context)
+        public AuthService(ApplicationDbContext databaseContext, JwtTokenGenerator jwtTokenGenerator)
         {
-            _databaseContext = context;
+            _databaseContext = databaseContext;
+            _jwtTokenGenerator = jwtTokenGenerator;
         }
     
         public async Task<object> LoginAsync(string email, string password, string userType)
         {
             if (userType == "TruckingCompany")
             {
-                var company = await _databaseContext.TruckingCompanies
+                var trCompany = await _databaseContext.TruckingCompanies
                     .Where(tc => tc.Email == email && tc.Password == password)
-                    .Select(company => new
+                    .Select(trCompany => new
                     {
-                        company.TrCompanyName,
-                        company.Email,
-                        company.TransportLicNo,
-                        company.GstNo,
-                        company.CreatedAt,
-                        company.UpdatedAt
+                        trCompany.TrCompanyName,
+                        trCompany.Email,
+                        trCompany.TransportLicNo,
+                        trCompany.GstNo,
+                        trCompany.CreatedAt,
+                        trCompany.UpdatedAt
                     })
                     .FirstOrDefaultAsync();
 
-                if (company == null)
+                if (trCompany == null)
                 {
                     throw new Exception("Invalid credentials.");
                 }
 
-                return company; 
+                var token = _jwtTokenGenerator.GenerateToken(email, userType);
+                return new {data = trCompany, token}; 
             }
             else if (userType == "Terminal")
             {
@@ -58,7 +63,8 @@ namespace advent_appointment_booking.Services
                     throw new Exception("Invalid credentials.");
                 }
 
-                return terminal; 
+                var token = _jwtTokenGenerator.GenerateToken(email, userType);
+                return new { data = terminal, token }; 
             }
 
             throw new Exception("Invalid user type.");
