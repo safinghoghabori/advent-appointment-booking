@@ -68,7 +68,7 @@ namespace advent_appointment_booking.Services
         }
 
         // Update Appointment (Trucking Company only)
-        public async Task<Appointment> UpdateAppointment(int appointmentId, Appointment updatedAppointment)
+        public async Task<string> UpdateAppointment(int appointmentId, Appointment updatedAppointment)
         {
             var appointment = await _databaseContext.Appointments.FindAsync(appointmentId);
             if (appointment == null || appointment.TrCompanyId != updatedAppointment.TrCompanyId)
@@ -79,21 +79,44 @@ namespace advent_appointment_booking.Services
             appointment.SizeType = updatedAppointment.SizeType;
             appointment.Line = updatedAppointment.Line;
             appointment.ChassisNo = updatedAppointment.ChassisNo;
+            appointment.TerminalId = updatedAppointment.TerminalId;
+            appointment.DriverId = updatedAppointment.DriverId;
             appointment.AppointmentLastModified = DateTime.UtcNow;
-            appointment.AppointmentValidThrough = appointment.AppointmentLastModified.AddDays(2);
 
             _databaseContext.Appointments.Update(appointment);
             await _databaseContext.SaveChangesAsync();
 
-            return appointment;
+            return "Appointment updated successfully.";
         }
 
         // Get Appointment (Accessible to both Trucking Company and Terminal)
-        public async Task<Appointment> GetAppointment(int appointmentId)
+        public async Task<object> GetAppointment(int appointmentId)
         {
             var appointment = await _databaseContext.Appointments
-                .Include(a => a.Terminal)
-                .Include(a => a.TruckingCompany)
+                .Select(a => new
+                {
+                    a.AppointmentId,
+                    a.ContainerNumber,
+                    a.SizeType,
+                    a.Line,
+                    a.ChassisNo,
+                    a.GateCode,
+                    a.AppointmentCreated,
+                    a.AppointmentStatus,
+                    a.AppointmentValidThrough,
+                    a.TruckingCompany.TrCompanyName,
+                    a.TruckingCompany.Email,
+                    a.TruckingCompany.GstNo,
+                    a.TruckingCompany.TransportLicNo,
+                    a.Terminal.PortName,
+                    a.Terminal.City,
+                    a.Terminal.State,
+                    a.Terminal.Country,
+                    a.Terminal.Address,
+                    a.Driver.DriverName,
+                    a.Driver.PlateNo,
+                    a.Driver.PhoneNumber
+                })
                 .FirstOrDefaultAsync(a => a.AppointmentId == appointmentId);
 
             if (appointment == null)

@@ -37,7 +37,7 @@ namespace advent_appointment_booking.Controllers
             try
             {
                 var result = await _appointmentService.UpdateAppointment(appointmentId, appointment);
-                return Ok(result);
+                return Ok(new { message = result });
             }
             catch (Exception ex)
             {
@@ -89,7 +89,7 @@ namespace advent_appointment_booking.Controllers
             try
             {
                 var result = await _appointmentService.CancelAppointment(appointmentId);
-                return Ok(result);
+                return Ok(new { message = result });
             }
             catch (Exception ex) {
                 return NotFound(new { message = ex.Message});
