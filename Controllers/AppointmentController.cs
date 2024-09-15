@@ -21,6 +21,13 @@ namespace advent_appointment_booking.Controllers
         [Authorize(Policy = Policy.RequireTruckingCompanyRole)]
         public async Task<IActionResult> CreateAppointment([FromBody] Appointment appointment)
         {
+            if (!ModelState.IsValid)
+            {
+                // Return a 400 Bad Request with a detailed message of what went wrong
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                return BadRequest(new { message = "Validation failed", errors });
+            }
+
             try
             {
                 var result = await _appointmentService.CreateAppointment(appointment);
@@ -36,6 +43,13 @@ namespace advent_appointment_booking.Controllers
         [Authorize(Policy = Policy.RequireTruckingCompanyRole)]
         public async Task<IActionResult> UpdateAppointment(int appointmentId, [FromBody] Appointment appointment)
         {
+            if (!ModelState.IsValid)
+            {
+                // Return a 400 Bad Request with a detailed message of what went wrong
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                return BadRequest(new { message = "Validation failed", errors });
+            }
+
             try
             {
                 var result = await _appointmentService.UpdateAppointment(appointmentId, appointment);

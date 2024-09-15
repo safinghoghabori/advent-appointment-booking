@@ -3,6 +3,7 @@ using advent_appointment_booking.Enums;
 using advent_appointment_booking.Helpers;
 using advent_appointment_booking.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +19,14 @@ builder.Services.AddControllers(options =>
     // Hence, no need to use [Authorize] for every controller or action.
     options.Filters.Add(new AuthorizeFilter());
 });
+
+// Suppress automatic validation by Asp.net core to allow 
+// using ModelState.IsValid and return custom error messages
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
