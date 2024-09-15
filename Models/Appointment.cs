@@ -28,13 +28,11 @@ namespace advent_appointment_booking.Models
         public string Line { get; set; }
         public string ChassisNo { get; set; }
         public string AppointmentStatus { get; set; }
-        [Required]
+        
         public DateTime AppointmentCreated { get; set; }
-        [Required]
         public DateTime AppointmentValidThrough { get; set; }
-        [Required]
         public DateTime AppointmentLastModified { get; set; }
-        public string GateCode { get; set; }
+        public string GateCode { get; set; }    
 
         public TruckingCompany? TruckingCompany { get; set; }
         public Terminal? Terminal { get; set; }
