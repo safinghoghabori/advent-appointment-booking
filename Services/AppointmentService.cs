@@ -1,7 +1,7 @@
 ﻿using advent_appointment_booking.Database;
+using advent_appointment_booking.DTOs;
 using advent_appointment_booking.Models;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace advent_appointment_booking.Services
 {
@@ -15,7 +15,7 @@ namespace advent_appointment_booking.Services
         }
 
         // Create Appointment (Trucking Company only)
-        public async Task<Appointment> CreateAppointment(Appointment appointment)
+        public async Task<CreateAppointmentDTO> CreateAppointment(Appointment appointment)
         {
             var truckingCompany = await _databaseContext.TruckingCompanies.FindAsync(appointment.TrCompanyId);
             if (truckingCompany == null)
@@ -24,6 +24,10 @@ namespace advent_appointment_booking.Services
             var terminal = await _databaseContext.Terminals.FindAsync(appointment.TerminalId);
             if (terminal == null)
                 throw new Exception("Invalid Terminal.");
+
+            var driver = await _databaseContext.Drivers.FindAsync(appointment.DriverId);
+            if (driver == null)
+                throw new Exception("Driver does not exists.");
 
             // Generate custom gate code: first two letters of Trucking Company + first three digits of Terminal ID
             string gateCode = $"{truckingCompany.TrCompanyName.Substring(0, 2).ToUpper()}{terminal.TerminalId.ToString().PadLeft(3, '0')}";
@@ -37,7 +41,30 @@ namespace advent_appointment_booking.Services
             await _databaseContext.Appointments.AddAsync(appointment);
             await _databaseContext.SaveChangesAsync();
 
-            return appointment;
+            return new CreateAppointmentDTO
+            {
+                TrCompanyName = truckingCompany.TrCompanyName,
+                GstNo = truckingCompany.GstNo,
+                TransportLicNo = truckingCompany.TransportLicNo,
+                PortName = terminal.PortName,
+                Address = terminal.Address,
+                City = terminal.City,
+                State = terminal.State,
+                Country = terminal.Country,
+                DriverName = driver.DriverName,
+                PlateNo = driver.PlateNo,
+                PhoneNumber = driver.PhoneNumber,
+                MoveType = appointment.MoveType,
+                ContainerNumber = appointment.ContainerNumber,
+                SizeType = appointment.SizeType,
+                Line = appointment.Line,
+                ChassisNo = appointment.ChassisNo,
+                AppointmentStatus = appointment.AppointmentStatus,
+                AppointmentCreated = appointment.AppointmentCreated,
+                AppointmentValidThrough = appointment.AppointmentValidThrough,
+                AppointmentLastModified = appointment.AppointmentLastModified,
+                GateCode = appointment.GateCode
+            };
         }
 
         // Update Appointment (Trucking Company only)
@@ -84,9 +111,24 @@ namespace advent_appointment_booking.Services
                     a.AppointmentId,
                     a.ContainerNumber,
                     a.SizeType,
+                    a.Line,
+                    a.ChassisNo,
+                    a.GateCode,
                     a.AppointmentCreated,
                     a.AppointmentStatus,
-                    a.AppointmentValidThrough
+                    a.AppointmentValidThrough,
+                    a.TruckingCompany.TrCompanyName,
+                    a.TruckingCompany.Email,
+                    a.TruckingCompany.GstNo,
+                    a.TruckingCompany.TransportLicNo,
+                    a.Terminal.PortName,
+                    a.Terminal.City,
+                    a.Terminal.State,
+                    a.Terminal.Country,
+                    a.Terminal.Address,
+                    a.Driver.DriverName,
+                    a.Driver.PlateNo,
+                    a.Driver.PhoneNumber
                 })
                 .ToListAsync();
         }

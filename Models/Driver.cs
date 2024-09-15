@@ -5,7 +5,8 @@ namespace advent_appointment_booking.Models
 {
     public class Driver
     {
-        [Key]  
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DriverId { get; set; }
 
         [ForeignKey("TruckingCompany")]  

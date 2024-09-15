@@ -32,7 +32,7 @@ namespace advent_appointment_booking.Models
         public DateTime AppointmentCreated { get; set; }
         public DateTime AppointmentValidThrough { get; set; }
         public DateTime AppointmentLastModified { get; set; }
-        public string GateCode { get; set; }    
+        public string? GateCode { get; set; }    
 
         public TruckingCompany? TruckingCompany { get; set; }
         public Terminal? Terminal { get; set; }
