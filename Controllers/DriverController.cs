@@ -36,16 +36,6 @@ namespace advent_appointment_booking.Controllers
             }
             catch (Exception ex)
             {
-                if (ex.Message.Contains("Trucking company doesn't exist"))
-                {
-                    return NotFound(new { message = ex.Message });
-                }
-                else if (ex.Message.Contains("Driver with the same plate number already exists") ||
-                         ex.Message.Contains("Driver with the same phone number already exists"))
-                {
-                    return Conflict(new { message = ex.Message });
-                }
-
                 return BadRequest(new { message = ex.Message });
             }
         }
@@ -54,34 +44,13 @@ namespace advent_appointment_booking.Controllers
         [HttpGet("{driverId}")]
         public async Task<IActionResult> GetDriver(int driverId)
         {
-            var driver = await _driverService.GetDriver(driverId);
-
-            if (driver == null)
-            {
-                return NotFound(new { message = "Driver not found" });
+            try {
+                var driver = await _driverService.GetDriver(driverId);
+                return Ok(driver);
             }
-
-            // Map the Driver entity to DriverDTO
-            var driverDto = new DriverDTO
-            {
-                DriverId = driver.DriverId,
-                TrCompanyId = driver.TrCompanyId,
-                DriverName = driver.DriverName,
-                PlateNo = driver.PlateNo,
-                PhoneNumber = driver.PhoneNumber,
-                TruckingCompany = new TruckingCompanyDTO
-                {
-                    TrCompanyId = driver.TruckingCompany.TrCompanyId,
-                    TrCompanyName = driver.TruckingCompany.TrCompanyName,
-                    GstNo = driver.TruckingCompany.GstNo,
-                    TransportLicNo = driver.TruckingCompany.TransportLicNo,
-                    Email = driver.TruckingCompany.Email,
-                    CreatedAt = driver.TruckingCompany.CreatedAt,
-                    UpdatedAt = driver.TruckingCompany.UpdatedAt
-                }
-            };
-
-            return Ok(driverDto);
+            catch(Exception ex) { 
+                return NotFound(new { message = ex.Message });
+            }
         }
 
 
@@ -91,28 +60,7 @@ namespace advent_appointment_booking.Controllers
         public async Task<IActionResult> GetAllDrivers()
         {
             var drivers = await _driverService.GetAllDrivers();
-
-            // Map each Driver entity to DriverDTO to remove circular references
-            var driverDtos = drivers.Select(driver => new DriverDTO
-            {
-                DriverId = driver.DriverId,
-                TrCompanyId = driver.TrCompanyId,
-                DriverName = driver.DriverName,
-                PlateNo = driver.PlateNo,
-                PhoneNumber = driver.PhoneNumber,
-                TruckingCompany = new TruckingCompanyDTO
-                {
-                    TrCompanyId = driver.TruckingCompany.TrCompanyId,
-                    TrCompanyName = driver.TruckingCompany.TrCompanyName,
-                    GstNo = driver.TruckingCompany.GstNo,
-                    TransportLicNo = driver.TruckingCompany.TransportLicNo,
-                    Email = driver.TruckingCompany.Email,
-                    CreatedAt = driver.TruckingCompany.CreatedAt,
-                    UpdatedAt = driver.TruckingCompany.UpdatedAt
-                }
-            }).ToList();
-
-            return Ok(driverDtos);
+            return Ok(drivers);
         }
 
 

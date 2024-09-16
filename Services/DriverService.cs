@@ -1,4 +1,5 @@
 using advent_appointment_booking.Database;
+using advent_appointment_booking.DTOs;
 using advent_appointment_booking.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -54,18 +55,67 @@ namespace advent_appointment_booking.Services
 
 
         // Other CRUD operations for Driver (Get, Update, Delete)
-        public async Task<Driver> GetDriver(int driverId)
+        public async Task<DriverDTO> GetDriver(int driverId)
         {
-            return await _context.Drivers
+            var driver = await _context.Drivers
                 .Include(d => d.TruckingCompany)
                 .FirstOrDefaultAsync(d => d.DriverId == driverId);
+
+            if (driver == null)
+            {
+                throw new Exception("Driver not found");
+            }
+
+            // Map the Driver entity to DriverDTO
+            var driverDto = new DriverDTO
+            {
+                DriverId = driver.DriverId,
+                TrCompanyId = driver.TrCompanyId,
+                DriverName = driver.DriverName,
+                PlateNo = driver.PlateNo,
+                PhoneNumber = driver.PhoneNumber,
+                TruckingCompany = new TruckingCompanyDTO
+                {
+                    TrCompanyId = driver.TruckingCompany.TrCompanyId,
+                    TrCompanyName = driver.TruckingCompany.TrCompanyName,
+                    GstNo = driver.TruckingCompany.GstNo,
+                    TransportLicNo = driver.TruckingCompany.TransportLicNo,
+                    Email = driver.TruckingCompany.Email,
+                    CreatedAt = driver.TruckingCompany.CreatedAt,
+                    UpdatedAt = driver.TruckingCompany.UpdatedAt
+                }
+            };
+
+            return driverDto;
         }
 
-        public async Task<IEnumerable<Driver>> GetAllDrivers()
+        public async Task<IEnumerable<DriverDTO>> GetAllDrivers()
         {
-            return await _context.Drivers
+            var drivers = await _context.Drivers
                 .Include(d => d.TruckingCompany)
                 .ToListAsync();
+
+            // Map each Driver entity to DriverDTO to remove circular references
+            var driverDtos = drivers.Select(driver => new DriverDTO
+            {
+                DriverId = driver.DriverId,
+                TrCompanyId = driver.TrCompanyId,
+                DriverName = driver.DriverName,
+                PlateNo = driver.PlateNo,
+                PhoneNumber = driver.PhoneNumber,
+                TruckingCompany = new TruckingCompanyDTO
+                {
+                    TrCompanyId = driver.TruckingCompany.TrCompanyId,
+                    TrCompanyName = driver.TruckingCompany.TrCompanyName,
+                    GstNo = driver.TruckingCompany.GstNo,
+                    TransportLicNo = driver.TruckingCompany.TransportLicNo,
+                    Email = driver.TruckingCompany.Email,
+                    CreatedAt = driver.TruckingCompany.CreatedAt,
+                    UpdatedAt = driver.TruckingCompany.UpdatedAt
+                }
+            }).ToList();
+
+            return driverDtos;
         }
 
         public async Task<string> UpdateDriver(int driverId, Driver driver)
