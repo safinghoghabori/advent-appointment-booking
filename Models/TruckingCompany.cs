@@ -17,7 +17,7 @@ namespace advent_appointment_booking.Models
         public string GstNo { get; set; }
 
         [MaxLength(50)]
-        public string TransportLicNo { get; set; }
+        public string TransportLicNumber { get; set; }
 
         [Required]
         [MaxLength(100)]

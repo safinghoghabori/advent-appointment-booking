@@ -7,17 +7,17 @@
         public string City { get; set; }
         public string State { get; set; }
         public string Country { get; set; }
-        public string PlateNo { get; set; }
+        public string PlateNumber { get; set; }
         public string PhoneNumber { get; set; }
         public string TrCompanyName { get; set; }
-        public string GstNo { get; set; }
-        public string TransportLicNo { get; set; }
+        public string GstNumber { get; set; }
+        public string TransportLicNumber { get; set; }
         public string DriverName { get; set; }
         public string MoveType { get; set; }
         public string ContainerNumber { get; set; }
         public string SizeType { get; set; }
         public string Line { get; set; }
-        public string ChassisNo { get; set; }
+        public string ChassisNumber { get; set; }
         public string AppointmentStatus { get; set; }
         public DateTime AppointmentCreated { get; set; }
         public DateTime AppointmentValidThrough { get; set; }

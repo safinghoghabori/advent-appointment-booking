@@ -27,7 +27,7 @@ namespace advent_appointment_booking.Services
                     {
                         trCompany.TrCompanyName,
                         trCompany.Email,
-                        trCompany.TransportLicNo,
+                        trCompany.TransportLicNumber,
                         trCompany.GstNo,
                         trCompany.CreatedAt,
                         trCompany.UpdatedAt

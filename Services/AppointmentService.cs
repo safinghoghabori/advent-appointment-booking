@@ -50,21 +50,21 @@ namespace advent_appointment_booking.Services
             return new CreateAppointmentDTO
             {
                 TrCompanyName = truckingCompany.TrCompanyName,
-                GstNo = truckingCompany.GstNo,
-                TransportLicNo = truckingCompany.TransportLicNo,
+                GstNumber = truckingCompany.GstNo,
+                TransportLicNumber = truckingCompany.TransportLicNumber,
                 PortName = terminal.PortName,
                 Address = terminal.Address,
                 City = terminal.City,
                 State = terminal.State,
                 Country = terminal.Country,
                 DriverName = driver.DriverName,
-                PlateNo = driver.PlateNo,
+                PlateNumber = driver.PlateNumber,
                 PhoneNumber = driver.PhoneNumber,
                 MoveType = appointment.MoveType,
                 ContainerNumber = appointment.ContainerNumber,
                 SizeType = appointment.SizeType,
                 Line = appointment.Line,
-                ChassisNo = appointment.ChassisNo,
+                ChassisNumber = appointment.ChassisNumber,
                 AppointmentStatus = appointment.AppointmentStatus,
                 AppointmentCreated = appointment.AppointmentCreated,
                 AppointmentValidThrough = appointment.AppointmentValidThrough,
@@ -84,7 +84,7 @@ namespace advent_appointment_booking.Services
             appointment.ContainerNumber = updatedAppointment.ContainerNumber;
             appointment.SizeType = updatedAppointment.SizeType;
             appointment.Line = updatedAppointment.Line;
-            appointment.ChassisNo = updatedAppointment.ChassisNo;
+            appointment.ChassisNumber = updatedAppointment.ChassisNumber;
             appointment.TerminalId = updatedAppointment.TerminalId;
             appointment.DriverId = updatedAppointment.DriverId;
             appointment.AppointmentLastModified = DateTime.UtcNow;
@@ -105,7 +105,7 @@ namespace advent_appointment_booking.Services
                     a.ContainerNumber,
                     a.SizeType,
                     a.Line,
-                    a.ChassisNo,
+                    a.ChassisNumber,
                     a.GateCode,
                     a.AppointmentCreated,
                     a.AppointmentStatus,
@@ -113,14 +113,14 @@ namespace advent_appointment_booking.Services
                     a.TruckingCompany.TrCompanyName,
                     a.TruckingCompany.Email,
                     a.TruckingCompany.GstNo,
-                    a.TruckingCompany.TransportLicNo,
+                    a.TruckingCompany.TransportLicNumber,
                     a.Terminal.PortName,
                     a.Terminal.City,
                     a.Terminal.State,
                     a.Terminal.Country,
                     a.Terminal.Address,
                     a.Driver.DriverName,
-                    a.Driver.PlateNo,
+                    a.Driver.PlateNumber,
                     a.Driver.PhoneNumber
                 })
                 .FirstOrDefaultAsync(a => a.AppointmentId == appointmentId);
@@ -141,7 +141,7 @@ namespace advent_appointment_booking.Services
                     a.ContainerNumber,
                     a.SizeType,
                     a.Line,
-                    a.ChassisNo,
+                    a.ChassisNumber,
                     a.GateCode,
                     a.AppointmentCreated,
                     a.AppointmentStatus,
@@ -149,14 +149,14 @@ namespace advent_appointment_booking.Services
                     a.TruckingCompany.TrCompanyName,
                     a.TruckingCompany.Email,
                     a.TruckingCompany.GstNo,
-                    a.TruckingCompany.TransportLicNo,
+                    a.TruckingCompany.TransportLicNumber,
                     a.Terminal.PortName,
                     a.Terminal.City,
                     a.Terminal.State,
                     a.Terminal.Country,
                     a.Terminal.Address,
                     a.Driver.DriverName,
-                    a.Driver.PlateNo,
+                    a.Driver.PlateNumber,
                     a.Driver.PhoneNumber
                 })
                 .ToListAsync();
