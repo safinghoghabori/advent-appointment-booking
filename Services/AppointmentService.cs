@@ -132,32 +132,32 @@ namespace advent_appointment_booking.Services
         }
 
         // Get All Appointments (Accessible to both Trucking Company and Terminal)
-        public async Task<IEnumerable<object>> GetAppointments()
+        public async Task<IEnumerable<CreateAppointmentDTO>> GetAppointments()
         {
             return await _databaseContext.Appointments
-                .Select(a => new
+                .Select(a => new CreateAppointmentDTO
                 {
-                    a.AppointmentId,
-                    a.ContainerNumber,
-                    a.SizeType,
-                    a.Line,
-                    a.ChassisNo,
-                    a.GateCode,
-                    a.AppointmentCreated,
-                    a.AppointmentStatus,
-                    a.AppointmentValidThrough,
-                    a.TruckingCompany.TrCompanyName,
-                    a.TruckingCompany.Email,
-                    a.TruckingCompany.GstNo,
-                    a.TruckingCompany.TransportLicNo,
-                    a.Terminal.PortName,
-                    a.Terminal.City,
-                    a.Terminal.State,
-                    a.Terminal.Country,
-                    a.Terminal.Address,
-                    a.Driver.DriverName,
-                    a.Driver.PlateNo,
-                    a.Driver.PhoneNumber
+                    PortName = a.Terminal.PortName,
+                    Address = a.Terminal.Address,
+                    City = a.Terminal.City,
+                    State = a.Terminal.State,
+                    Country = a.Terminal.Country,
+                    TrCompanyName = a.TruckingCompany.TrCompanyName,
+                    GstNo = a.TruckingCompany.GstNo,
+                    TransportLicNo = a.TruckingCompany.TransportLicNo,
+                    MoveType = a.MoveType,
+                    ContainerNumber = a.ContainerNumber,
+                    SizeType = a.SizeType,
+                    Line = a.Line,
+                    ChassisNo = a.ChassisNo,
+                    DriverName = a.Driver.DriverName,
+                    PlateNo = a.Driver.PlateNo,
+                    PhoneNumber = a.Driver.PhoneNumber,
+                    AppointmentStatus = a.AppointmentStatus,
+                    AppointmentCreated = a.AppointmentCreated,
+                    AppointmentValidThrough = a.AppointmentValidThrough,
+                    AppointmentLastModified = a.AppointmentLastModified,
+                    GateCode = a.GateCode
                 })
                 .ToListAsync();
         }
@@ -189,5 +189,21 @@ namespace advent_appointment_booking.Services
 
             return "Appointment canceled successfully.";
         }
+
+        public async Task<string> ApproveAppointment(int appointmentId)
+        {
+            var appointment = await _databaseContext.Appointments.FindAsync(appointmentId);
+            if (appointment == null)
+                throw new Exception("Appointment not found.");
+
+            // Update the status to 'Approved'
+            appointment.AppointmentStatus = "Approved";
+
+            _databaseContext.Appointments.Update(appointment);
+            await _databaseContext.SaveChangesAsync();
+
+            return "Appointment approved successfully.";
+        }
+
     }
 }
