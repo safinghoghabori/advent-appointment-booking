@@ -1,0 +1,2 @@
+// SelfReview: Best practices 
+// like Naming convention, SOLID, DI, Repository pattern 
