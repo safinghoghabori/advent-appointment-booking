@@ -18,31 +18,24 @@ namespace advent_appointment_booking.Controllers
             _authService = authService;
         }
 
-        /*
-            POST /api/auth?userType=TruckingCompany
-            {
-                "email": "example@company.com",
-                "password": "password123"
-            }
-        */
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] Login login, [FromQuery] string userType)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(new { message = "Invalid login details" });
             }
 
             try
             {
                 var result = await _authService.LoginAsync(login.Email, login.Password, userType);
-                return Ok(result); 
+                return Ok(result);
             }
             catch (Exception ex)
             {
                 return Unauthorized(new { message = ex.Message });
             }
         }
-
     }
+
 }

@@ -13,7 +13,7 @@ namespace advent_appointment_booking.Controllers
     public class AppointmentController : ControllerBase
     {
         private readonly IAppointmentService _appointmentService;
-        
+
         public AppointmentController(IAppointmentService appointmentService)
         {
             _appointmentService = appointmentService;
@@ -25,7 +25,6 @@ namespace advent_appointment_booking.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // Return a 400 Bad Request with a detailed message of what went wrong
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
                 return BadRequest(new { message = "Validation failed", errors });
             }
@@ -37,7 +36,7 @@ namespace advent_appointment_booking.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new {message = ex.Message});
+                return BadRequest(new { message = ex.Message });
             }
         }
 
@@ -47,7 +46,6 @@ namespace advent_appointment_booking.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // Return a 400 Bad Request with a detailed message of what went wrong
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
                 return BadRequest(new { message = "Validation failed", errors });
             }
@@ -65,21 +63,22 @@ namespace advent_appointment_booking.Controllers
 
         [HttpGet("get/{appointmentId}")]
         [Authorize(Policy = Policy.RequireTruckingCompanyOrTerminalRole)]
-        public async Task<IActionResult> GetAppointment(int appointmentId)
+        public async Task<IActionResult> GetAppointmentById(int appointmentId)
         {
             try
             {
                 var result = await _appointmentService.GetAppointment(appointmentId);
                 return Ok(result);
             }
-            catch (Exception ex) {
-                return NotFound(new { message = ex.Message});
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
             }
         }
 
-        [HttpGet("get-all")]
+        [HttpGet("appointments")]
         [Authorize(Policy = Policy.RequireTruckingCompanyOrTerminalRole)]
-        public async Task<IActionResult> GetAppointments([FromQuery] string format = "json")
+        public async Task<IActionResult> GetAllAppointments([FromQuery] string format = "json")
         {
             var result = await _appointmentService.GetAppointments();
 
@@ -88,15 +87,12 @@ namespace advent_appointment_booking.Controllers
                 var stream = GenerateExcelFile(result);
                 string excelFileName = "Appointments.xlsx";
 
-                // Ensure the stream's position is reset before returning the file
                 stream.Position = 0;
-
-                // Set the correct Content-Type and Content-Disposition for file download
                 Response.Headers.Append("Content-Disposition", $"attachment; filename={excelFileName}");
                 return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             }
 
-            return Ok(result); // Return as JSON
+            return Ok(result);
         }
 
         private MemoryStream GenerateExcelFile(IEnumerable<CreateAppointmentDTO> appointments)
@@ -156,7 +152,7 @@ namespace advent_appointment_booking.Controllers
                 package.Save();
             }
 
-            stream.Position = 0; 
+            stream.Position = 0;
             return stream;
         }
 
@@ -169,7 +165,7 @@ namespace advent_appointment_booking.Controllers
                 var result = await _appointmentService.DeleteAppointment(appointmentId);
                 return Ok(new { message = result });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return NotFound(new { message = ex.Message });
             }
@@ -184,8 +180,9 @@ namespace advent_appointment_booking.Controllers
                 var result = await _appointmentService.CancelAppointment(appointmentId);
                 return Ok(new { message = result });
             }
-            catch (Exception ex) {
-                return NotFound(new { message = ex.Message});
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
             }
         }
 
