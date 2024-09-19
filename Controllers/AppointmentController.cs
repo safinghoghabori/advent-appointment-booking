@@ -22,7 +22,7 @@ namespace advent_appointment_booking.Controllers
         }
 
         [HttpPost("create")]
-       // [Authorize(Policy = Policy.RequireTruckingCompanyRole)]
+        [Authorize(Policy = Policy.RequireTruckingCompanyRole)]
         public async Task<IActionResult> CreateAppointment([FromBody] Appointment appointment)
         {
             _logger.Info(DateTime.Today.ToLongDateString()+" : Appointment creation process started ...");
