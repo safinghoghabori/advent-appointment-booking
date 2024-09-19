@@ -2,6 +2,7 @@
 using advent_appointment_booking.Enums;
 using advent_appointment_booking.Models;
 using advent_appointment_booking.Services;
+using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
@@ -13,30 +14,35 @@ namespace advent_appointment_booking.Controllers
     public class AppointmentController : ControllerBase
     {
         private readonly IAppointmentService _appointmentService;
-        
+        private readonly ILog _logger;
         public AppointmentController(IAppointmentService appointmentService)
         {
             _appointmentService = appointmentService;
+            _logger = LogManager.GetLogger(typeof(CustomExceptionFilter));
         }
 
         [HttpPost("create")]
-        [Authorize(Policy = Policy.RequireTruckingCompanyRole)]
+       // [Authorize(Policy = Policy.RequireTruckingCompanyRole)]
         public async Task<IActionResult> CreateAppointment([FromBody] Appointment appointment)
         {
+            _logger.Info(DateTime.Today.ToLongDateString()+" : Appointment creation process started ...");
             if (!ModelState.IsValid)
             {
                 // Return a 400 Bad Request with a detailed message of what went wrong
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                _logger.Error(DateTime.Today.ToLongDateString() + " : Validation Failed " + errors);
                 return BadRequest(new { message = "Validation failed", errors });
             }
 
             try
             {
                 var result = await _appointmentService.CreateAppointment(appointment);
+                _logger.Info(DateTime.Today.ToLongDateString()+": Appointment created successfully.");
                 return Ok(result);
             }
             catch (Exception ex)
             {
+                _logger.Error(DateTime.Today.ToLongDateString() + " Appointment creation failed "  + ex.Message);
                 return BadRequest(new {message = ex.Message});
             }
         }
@@ -45,20 +51,26 @@ namespace advent_appointment_booking.Controllers
         [Authorize(Policy = Policy.RequireTruckingCompanyRole)]
         public async Task<IActionResult> UpdateAppointment(int appointmentId, [FromBody] Appointment appointment)
         {
+            _logger.Info(DateTime.Today.ToLongDateString()+" : Updating appointment process started for Id   "  + appointmentId);
+
             if (!ModelState.IsValid)
             {
                 // Return a 400 Bad Request with a detailed message of what went wrong
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                _logger.Error(DateTime.Today.ToLongDateString()+" : Validation failed  " + errors);
                 return BadRequest(new { message = "Validation failed", errors });
             }
 
             try
             {
                 var result = await _appointmentService.UpdateAppointment(appointmentId, appointment);
+                _logger.Info(DateTime.Today.ToLongDateString()+" : Appointment updated successfully " +  appointmentId);
+
                 return Ok(new { message = result });
             }
             catch (Exception ex)
             {
+                _logger.Error(DateTime.Today.ToLongDateString()+" : Failed to update appointment with Id  " + appointmentId + " " + ex.Message);
                 return BadRequest(new { message = ex.Message });
             }
         }
@@ -67,12 +79,17 @@ namespace advent_appointment_booking.Controllers
         [Authorize(Policy = Policy.RequireTruckingCompanyOrTerminalRole)]
         public async Task<IActionResult> GetAppointment(int appointmentId)
         {
+            _logger.Info(DateTime.Today.ToLongDateString()+" : GetAppointment process strated for Id  " +  appointmentId);
+
             try
             {
                 var result = await _appointmentService.GetAppointment(appointmentId);
+                _logger.Info(DateTime.Today.ToLongDateString()+" : Fetched appointment successfully using  id " + appointmentId);
+
                 return Ok(result);
             }
             catch (Exception ex) {
+                _logger.Error(DateTime.Today.ToLongDateString()+" : Failed to fetch appointment details using appointmentId  " + ex.Message);
                 return NotFound(new { message = ex.Message});
             }
         }
@@ -81,6 +98,7 @@ namespace advent_appointment_booking.Controllers
         [Authorize(Policy = Policy.RequireTruckingCompanyOrTerminalRole)]
         public async Task<IActionResult> GetAppointments([FromQuery] string format = "json")
         {
+            _logger.Info(DateTime.Today.ToLongDateString()+" : GetAppointments process started");
             var result = await _appointmentService.GetAppointments();
 
             if (format.ToLower() == "excel")
@@ -96,6 +114,7 @@ namespace advent_appointment_booking.Controllers
                 return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             }
 
+            _logger.Info(DateTime.Today.ToLongDateString()+" : Fetched appointments successfully"); 
             return Ok(result); // Return as JSON
         }
 
@@ -164,13 +183,18 @@ namespace advent_appointment_booking.Controllers
         [Authorize(Policy = Policy.RequireTruckingCompanyRole)]
         public async Task<IActionResult> DeleteAppointment(int appointmentId)
         {
+            _logger.Info(DateTime.Today.ToLongDateString()+" : DeleteAppointment process started for Id"  + appointmentId);
+
             try
             {
                 var result = await _appointmentService.DeleteAppointment(appointmentId);
+                _logger.Info(DateTime.Today.ToLongDateString()+" :  appointment  deleted successfully  with Id " +  appointmentId);
+
                 return Ok(new { message = result });
             }
             catch(Exception ex)
             {
+                _logger.Error(DateTime.Today.ToLongDateString()+" : Failed to delete appointment with Id  " + appointmentId + " " + ex.Message);
                 return NotFound(new { message = ex.Message });
             }
         }
@@ -179,12 +203,17 @@ namespace advent_appointment_booking.Controllers
         [Authorize(Policy = Policy.RequireTerminalRole)]
         public async Task<IActionResult> CancelAppointment(int appointmentId)
         {
+            _logger.Info(DateTime.Today.ToLongDateString()+" : CancelAppointment process started for Id " +  appointmentId);
+
             try
             {
                 var result = await _appointmentService.CancelAppointment(appointmentId);
+                _logger.Info(DateTime.Today.ToLongDateString()+" : Appointment canceled successfully with Id   " + appointmentId);
+
                 return Ok(new { message = result });
             }
             catch (Exception ex) {
+                _logger.Error(DateTime.Today.ToLongDateString()+" :  Failed to cancel appointment with Id " + appointmentId + " " + ex.Message);
                 return NotFound(new { message = ex.Message});
             }
         }
@@ -193,13 +222,17 @@ namespace advent_appointment_booking.Controllers
         [Authorize(Policy = Policy.RequireTerminalRole)]
         public async Task<IActionResult> ApproveAppointment(int appointmentId)
         {
+            _logger.Info(DateTime.Today.ToLongDateString()+" : ApproveAppointment process started for Id"  +  appointmentId);
+
             try
             {
                 var result = await _appointmentService.ApproveAppointment(appointmentId);
+                _logger.Info(DateTime.Today.ToLongDateString()+" : Appointment approved successfully with Id " + appointmentId  );
                 return Ok(new { message = result });
             }
             catch (Exception ex)
             {
+                _logger.Error(DateTime.Today.ToLongDateString()+" :  Failed to Approve appointment with Id " + appointmentId + " " + ex.Message);
                 return NotFound(new { message = ex.Message });
             }
         }
