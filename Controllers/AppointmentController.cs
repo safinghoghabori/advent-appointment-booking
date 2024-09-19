@@ -92,7 +92,7 @@ namespace advent_appointment_booking.Controllers
             }
         }
 
-        [HttpGet("appointments")]
+        [HttpGet("all")]
         [Authorize(Policy = Policy.RequireTruckingCompanyOrTerminalRole)]
         public async Task<IActionResult> GetAllAppointments([FromQuery] string format = "json")
         {
