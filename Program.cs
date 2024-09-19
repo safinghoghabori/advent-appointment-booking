@@ -8,16 +8,24 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System;
+using log4net;
+using log4net.Config;
+
+[assembly: log4net.Config.XmlConfigurator(ConfigFile = "log4net.config", Watch = true)]
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
+// Add services to the container.
+var logRepository = LogManager.GetRepository(System.Reflection.Assembly.GetEntryAssembly());
+XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 builder.Services.AddControllers(options =>
 {
     // Set authentication globally i.e. for all Controllers 
     // Hence, no need to use [Authorize] for every controller or action.
     options.Filters.Add(new AuthorizeFilter());
+    options.Filters.Add<CustomExceptionFilter>();
 });
 
 // Suppress automatic validation by Asp.net core to allow 
@@ -26,7 +34,6 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
-
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -68,13 +75,11 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(Policy.RequireTruckingCompanyRole, policy => policy.RequireClaim("Role", UserType.TruckingCompany));
     options.AddPolicy(Policy.RequireTerminalRole, policy => policy.RequireClaim("Role", UserType.Terminal));
-    options.AddPolicy(Policy.RequireTruckingCompanyOrTerminalRole, policy => policy.RequireAssertion(context => context.User.HasClaim(c => c.Type == "Role" && (c.Value == UserType.TruckingCompany || c.Value == UserType.Terminal)))
-                );
+    options.AddPolicy(Policy.RequireTruckingCompanyOrTerminalRole, policy => policy.RequireAssertion(context => context.User.HasClaim(c => c.Type == "Role" && (c.Value == UserType.TruckingCompany || c.Value == UserType.Terminal))));
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -84,9 +89,8 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.UseHttpsRedirection();
-
 app.MapControllers();
 
 app.Run();
+
