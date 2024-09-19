@@ -113,7 +113,7 @@ namespace advent_appointment_booking.Services
                     CreatedAt = driver.TruckingCompany.CreatedAt,
                     UpdatedAt = driver.TruckingCompany.UpdatedAt
                 }
-            }).ToList();
+            }).ToList();  
 
             return driverDtos;
         }
