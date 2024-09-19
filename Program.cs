@@ -24,6 +24,7 @@ builder.Services.AddControllers(options =>
 {
     // Set authentication globally i.e. for all Controllers 
     // Hence, no need to use [Authorize] for every controller or action.
+    options.Filters.Add(new AuthorizeFilter());
     options.Filters.Add<CustomExceptionFilter>();
 });
 
