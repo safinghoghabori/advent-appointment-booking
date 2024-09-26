@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using System;
 using log4net;
 using log4net.Config;
 
@@ -20,6 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var logRepository = LogManager.GetRepository(System.Reflection.Assembly.GetEntryAssembly());
 XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
+
 builder.Services.AddControllers(options =>
 {
     // Set authentication globally i.e. for all Controllers 
@@ -38,6 +38,18 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin()  // Allow all origins
+                   .AllowAnyHeader()  // Allow any header
+                   .AllowAnyMethod(); // Allow any method
+        });
+});
 
 // Register the DbContext using the connection string from the configuration
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"]));
@@ -86,10 +98,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseHttpsRedirection();
+// Use CORS policy
+app.UseCors("AllowAllOrigins");
+
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseHttpsRedirection();
 app.MapControllers();
 
 app.Run();

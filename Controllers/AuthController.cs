@@ -37,9 +37,7 @@ namespace advent_appointment_booking.Controllers
             if (!ModelState.IsValid)
             {
                 _logger.Error(DateTime.Today.ToLongDateString()+" : Login attempt Failed for UserType = "  + userType);
-
                 return BadRequest(ModelState);
-                
             }
 
             try
@@ -52,7 +50,6 @@ namespace advent_appointment_booking.Controllers
             catch (Exception ex)
             {
                 _logger.Error(DateTime.Today.ToLongDateString()+" : Failed to Login as  " +  userType + " " + ex.Message);
-
                 return Unauthorized(new { message = ex.Message });
             }
         }

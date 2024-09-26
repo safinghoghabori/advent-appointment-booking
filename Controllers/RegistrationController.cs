@@ -21,7 +21,7 @@ namespace advent_appointment_booking.Controllers
             _logger = LogManager.GetLogger(typeof(CustomExceptionFilter));
         }
 
-        [HttpPost("truckingcompany")]
+        [HttpPost("TruckingCompany")]
         public async Task<IActionResult> RegisterTruckingCompany([FromBody] TruckingCompany model)
         {
             _logger.Info(DateTime.Today.ToLongDateString()+": RegisterTruckingCompany process started " + model);
@@ -45,7 +45,7 @@ namespace advent_appointment_booking.Controllers
             }
         }
 
-        [HttpPost("terminal")]
+        [HttpPost("Terminal")]
         public async Task<IActionResult> RegisterTerminal([FromBody] Terminal model)
         {
             _logger.Info(DateTime.Today.ToLongDateString()+": RegisterTerminal process started with Model" + model);
