@@ -28,7 +28,6 @@ namespace advent_appointment_booking.Controllers
             _logger.Info(DateTime.Today.ToLongDateString()+" : Appointment creation process started ...");
             if (!ModelState.IsValid)
             {
-                // Return a 400 Bad Request with a detailed message of what went wrong
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
                 _logger.Error(DateTime.Today.ToLongDateString() + " : Validation Failed " + errors);
                 return BadRequest(new { message = "Validation failed", errors });
@@ -55,7 +54,6 @@ namespace advent_appointment_booking.Controllers
 
             if (!ModelState.IsValid)
             {
-                // Return a 400 Bad Request with a detailed message of what went wrong
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
                 _logger.Error(DateTime.Today.ToLongDateString()+" : Validation failed  " + errors);
                 return BadRequest(new { message = "Validation failed", errors });
@@ -77,7 +75,7 @@ namespace advent_appointment_booking.Controllers
 
         [HttpGet("get/{appointmentId}")]
         [Authorize(Policy = Policy.RequireTruckingCompanyOrTerminalRole)]
-        public async Task<IActionResult> GetAppointment(int appointmentId)
+        public async Task<IActionResult> GetAppointmentById(int appointmentId)
         {
             _logger.Info(DateTime.Today.ToLongDateString()+" : GetAppointment process strated for Id  " +  appointmentId);
 
@@ -94,9 +92,9 @@ namespace advent_appointment_booking.Controllers
             }
         }
 
-        [HttpGet("get-all")]
+        [HttpGet("all")]
         [Authorize(Policy = Policy.RequireTruckingCompanyOrTerminalRole)]
-        public async Task<IActionResult> GetAppointments([FromQuery] string format = "json")
+        public async Task<IActionResult> GetAllAppointments([FromQuery] string format = "json")
         {
             _logger.Info(DateTime.Today.ToLongDateString()+" : GetAppointments process started");
             var result = await _appointmentService.GetAppointments();
@@ -106,10 +104,7 @@ namespace advent_appointment_booking.Controllers
                 var stream = GenerateExcelFile(result);
                 string excelFileName = "Appointments.xlsx";
 
-                // Ensure the stream's position is reset before returning the file
                 stream.Position = 0;
-
-                // Set the correct Content-Type and Content-Disposition for file download
                 Response.Headers.Append("Content-Disposition", $"attachment; filename={excelFileName}");
                 return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             }
@@ -175,7 +170,7 @@ namespace advent_appointment_booking.Controllers
                 package.Save();
             }
 
-            stream.Position = 0; 
+            stream.Position = 0;
             return stream;
         }
 
@@ -192,7 +187,7 @@ namespace advent_appointment_booking.Controllers
 
                 return Ok(new { message = result });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.Error(DateTime.Today.ToLongDateString()+" : Failed to delete appointment with Id  " + appointmentId + " " + ex.Message);
                 return NotFound(new { message = ex.Message });

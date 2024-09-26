@@ -22,14 +22,7 @@ namespace advent_appointment_booking.Controllers
             _logger = LogManager.GetLogger(typeof(CustomExceptionFilter));
         }
 
-        /*
-            POST /api/auth?userType=TruckingCompany
-            {
-                "email": "example@company.com",
-                "password": "password123"
-            }
-        */
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] Login login, [FromQuery] string userType)
         {
             _logger.Info(DateTime.Today.ToLongDateString()+" : Login process started for userType =" +  userType);
@@ -39,7 +32,7 @@ namespace advent_appointment_booking.Controllers
                 _logger.Error(DateTime.Today.ToLongDateString()+" : Login attempt Failed for UserType = "  + userType);
                 return BadRequest(ModelState);
             }
-
+            
             try
             {
                 var result = await _authService.LoginAsync(login.Email, login.Password, userType);
@@ -53,6 +46,5 @@ namespace advent_appointment_booking.Controllers
                 return Unauthorized(new { message = ex.Message });
             }
         }
-
     }
 }
