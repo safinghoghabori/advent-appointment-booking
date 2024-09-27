@@ -22,41 +22,31 @@ namespace advent_appointment_booking.Services
             if (userType == UserType.TruckingCompany)
             {
                 var trCompany = await _databaseContext.TruckingCompanies
-                    .Where(tc => tc.Email == email && tc.Password == password)
-                    .Select(trCompany => new
-                    {
-                        trCompany.TrCompanyName,
-                        trCompany.Email,
-                        trCompany.TransportLicNo,
-                        trCompany.GstNo,
-                        trCompany.CreatedAt,
-                        trCompany.UpdatedAt
-                    })
-                    .FirstOrDefaultAsync();
+                    .Where(tc => tc.Email == email && tc.Password == password).FirstOrDefaultAsync();
 
                 if (trCompany == null)
                 {
                     throw new Exception("Invalid credentials.");
                 }
 
-                var token = _jwtTokenGenerator.GenerateToken(email, userType);
-                return new {data = trCompany, token}; 
+                var token = _jwtTokenGenerator.GenerateToken(email, userType, trCompany.TrCompanyId);
+
+                var result = new
+                {
+                    trCompany.TrCompanyName,
+                    trCompany.Email,
+                    trCompany.TransportLicNo,
+                    trCompany.GstNo,
+                    trCompany.CreatedAt,
+                    trCompany.UpdatedAt
+                };
+
+                return new {data = result, token}; 
             }
             else if (userType == UserType.Terminal)
             {
                 var terminal = await _databaseContext.Terminals
                     .Where(t => t.Email == email && t.Password == password)
-                    .Select(tr => new
-                    {
-                        tr.PortName,
-                        tr.Email,
-                        tr.Address,
-                        tr.City,
-                        tr.State,
-                        tr.Country,
-                        tr.CreatedAt,
-                        tr.UpdatedAt
-                    })
                     .FirstOrDefaultAsync();
 
                 if (terminal == null)
@@ -64,7 +54,19 @@ namespace advent_appointment_booking.Services
                     throw new Exception("Invalid credentials.");
                 }
 
-                var token = _jwtTokenGenerator.GenerateToken(email, userType);
+                var token = _jwtTokenGenerator.GenerateToken(email, userType, terminal.TerminalId);
+
+                var result = new
+                {
+                    terminal.PortName,
+                    terminal.Email,
+                    terminal.Address,
+                    terminal.City,
+                    terminal.State,
+                    terminal.Country,
+                    terminal.CreatedAt,
+                    terminal.UpdatedAt
+                };
                 return new { data = terminal, token }; 
             }
 

@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using log4net;
 using log4net.Config;
+using System.Security.Claims;
 
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "log4net.config", Watch = true)]
 
@@ -85,9 +86,9 @@ builder.Services.AddAuthentication(options =>
 // Add Authorization policies
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy(Policy.RequireTruckingCompanyRole, policy => policy.RequireClaim("Role", UserType.TruckingCompany));
-    options.AddPolicy(Policy.RequireTerminalRole, policy => policy.RequireClaim("Role", UserType.Terminal));
-    options.AddPolicy(Policy.RequireTruckingCompanyOrTerminalRole, policy => policy.RequireAssertion(context => context.User.HasClaim(c => c.Type == "Role" && (c.Value == UserType.TruckingCompany || c.Value == UserType.Terminal))));
+    options.AddPolicy(Policy.RequireTruckingCompanyRole, policy => policy.RequireClaim(ClaimTypes.Role, UserType.TruckingCompany));
+    options.AddPolicy(Policy.RequireTerminalRole, policy => policy.RequireClaim(ClaimTypes.Role, UserType.Terminal));
+    options.AddPolicy(Policy.RequireTruckingCompanyOrTerminalRole, policy => policy.RequireAssertion(context => context.User.HasClaim(c => c.Type == ClaimTypes.Role && (c.Value == UserType.TruckingCompany || c.Value == UserType.Terminal))));
 });
 
 var app = builder.Build();

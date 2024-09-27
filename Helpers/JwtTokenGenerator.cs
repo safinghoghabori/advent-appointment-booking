@@ -14,16 +14,17 @@ namespace advent_appointment_booking.Helpers
             _configuration = configuration;
         }
 
-        public string GenerateToken(string username, string role)
+        public string GenerateToken(string username, string role, int userId)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
 
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, username),
-                new Claim(ClaimTypes.Name, username),
-                new Claim("Role", role),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(ClaimTypes.Email, username),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Role, role),
+                new Claim(ClaimTypes.Name, userId.ToString()),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));

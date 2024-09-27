@@ -38,7 +38,7 @@ namespace advent_appointment_booking.Controllers
             {
                 var result = await _driverService.CreateDriver(driver);
                 _logger.Info(DateTime.Today.ToLongDateString()+": Driver created successfully ");
-                return Ok(result);
+                return Ok(new { message = result });
             }
             catch (Exception ex)
             {
@@ -64,17 +64,15 @@ namespace advent_appointment_booking.Controllers
             }
         }
 
-
         // Get all drivers
-        [HttpGet]
+        [HttpGet("trCompanyId/{trCompanyId}")]
         [Authorize(Policy = Policy.RequireTruckingCompanyRole)]
-        public async Task<IActionResult> GetAllDrivers()
+        public async Task<IActionResult> GetAllDrivers(int trCompanyId)
         {
-            var drivers = await _driverService.GetAllDrivers();
+            var drivers = await _driverService.GetAllDrivers(trCompanyId);
             _logger.Info(DateTime.Today.ToLongDateString()+" :  Drivers details fetched successfully" );
             return Ok(drivers);
         }
-
 
         // Update a driver
         [HttpPut("{driverId}")]
@@ -82,15 +80,12 @@ namespace advent_appointment_booking.Controllers
         public async Task<IActionResult> UpdateDriver(int driverId, [FromBody] Driver driver)
         {
              _logger.Info(DateTime.Today.ToLongDateString()+" :  UpdateDriver process  initiated using DriverId " + driverId );
-
              
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
                 _logger.Error(DateTime.Today.ToLongDateString()+" : Validation failed for  " + driverId + " " + errors);
                 return BadRequest(new { message = "Validation failed", errors });
-                
-
             }
 
             try

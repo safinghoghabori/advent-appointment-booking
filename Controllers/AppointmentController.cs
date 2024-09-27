@@ -6,6 +6,7 @@ using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
+using System.Security.Claims;
 
 namespace advent_appointment_booking.Controllers
 {
@@ -96,8 +97,12 @@ namespace advent_appointment_booking.Controllers
         [Authorize(Policy = Policy.RequireTruckingCompanyOrTerminalRole)]
         public async Task<IActionResult> GetAllAppointments([FromQuery] string format = "json")
         {
+            // Extract user details
+            var userId = User.FindFirst(ClaimTypes.Name)?.Value; // Assuming NameIdentifier is stored in claims
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;  // Assuming Role is stored in claims
+
             _logger.Info(DateTime.Today.ToLongDateString()+" : GetAppointments process started");
-            var result = await _appointmentService.GetAppointments();
+            var result = await _appointmentService.GetAppointments(userId, role);
 
             if (format.ToLower() == "excel")
             {

@@ -1,7 +1,9 @@
 ﻿using advent_appointment_booking.Database;
 using advent_appointment_booking.DTOs;
+using advent_appointment_booking.Enums;
 using advent_appointment_booking.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace advent_appointment_booking.Services
 {
@@ -132,10 +134,28 @@ namespace advent_appointment_booking.Services
         }
 
         // Get All Appointments (Accessible to both Trucking Company and Terminal)
-        public async Task<IEnumerable<CreateAppointmentDTO>> GetAppointments()
+        public async Task<IEnumerable<CreateAppointmentDTO>> GetAppointments(string userId, string role)
         {
-            return await _databaseContext.Appointments
-                .Select(a => new CreateAppointmentDTO
+            var data = new List<Appointment>();
+
+            if (role == UserType.TruckingCompany)
+            {
+                data = await _databaseContext.Appointments
+                    .Include(a => a.TruckingCompany)  // Include the related TruckingCompany entity
+                    .Include(a => a.Terminal)         // Include the related Terminal entity
+                    .Include(a => a.Driver)           // Include the related Driver entity
+                    .Where(app => app.TrCompanyId == Convert.ToInt32(userId)).ToListAsync();
+            }
+            else if(role == UserType.Terminal)
+            {
+                data = await _databaseContext.Appointments
+                    .Include(a => a.TruckingCompany)  // Include the related TruckingCompany entity
+                    .Include(a => a.Terminal)         // Include the related Terminal entity
+                    .Include(a => a.Driver)           // Include the related Driver entity
+                    .Where(app => app.TerminalId == Convert.ToInt32(userId)).ToListAsync();
+            }
+
+            return data.Select(a => new CreateAppointmentDTO
                 {
                     PortName = a.Terminal.PortName,
                     Address = a.Terminal.Address,
@@ -159,7 +179,7 @@ namespace advent_appointment_booking.Services
                     AppointmentLastModified = a.AppointmentLastModified,
                     GateCode = a.GateCode
                 })
-                .ToListAsync();
+                .ToList();
         }
 
         // Delete Appointment (Trucking Company only)
