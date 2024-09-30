@@ -33,6 +33,7 @@ namespace advent_appointment_booking.Services
 
                 var result = new
                 {
+                    trCompany.TrCompanyId,
                     trCompany.TrCompanyName,
                     trCompany.Email,
                     trCompany.TransportLicNo,
@@ -58,6 +59,7 @@ namespace advent_appointment_booking.Services
 
                 var result = new
                 {
+                    terminal.TerminalId,
                     terminal.PortName,
                     terminal.Email,
                     terminal.Address,
