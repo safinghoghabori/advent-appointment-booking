@@ -157,6 +157,7 @@ namespace advent_appointment_booking.Services
 
             return data.Select(a => new CreateAppointmentDTO
                 {
+                    AppointmentId = a.AppointmentId,
                     PortName = a.Terminal.PortName,
                     Address = a.Terminal.Address,
                     City = a.Terminal.City,
