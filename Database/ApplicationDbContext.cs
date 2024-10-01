@@ -35,7 +35,7 @@ namespace advent_appointment_booking.Database
                 .HasOne(a => a.Driver)
                 .WithMany(d => d.Appointments)
                 .HasForeignKey(a => a.DriverId)
-                .OnDelete(DeleteBehavior.Restrict);  // Disable cascade delete
+                .OnDelete(DeleteBehavior.Cascade);  // Disable cascade delete
 
             modelBuilder.Entity<Driver>()
                 .HasOne(d => d.TruckingCompany)
