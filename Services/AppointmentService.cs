@@ -1,4 +1,5 @@
-﻿using advent_appointment_booking.Database;
+﻿using advent_appointment_booking.Constants;
+using advent_appointment_booking.Database;
 using advent_appointment_booking.DTOs;
 using advent_appointment_booking.Enums;
 using advent_appointment_booking.Models;
@@ -44,7 +45,7 @@ namespace advent_appointment_booking.Services
             appointment.AppointmentCreated = DateTime.UtcNow;
             appointment.AppointmentLastModified = DateTime.UtcNow;
             appointment.AppointmentValidThrough = appointment.AppointmentCreated.AddDays(2);
-            appointment.AppointmentStatus = "Scheduled";
+            appointment.AppointmentStatus = AppointmentStatus.Scheduled;
 
             await _databaseContext.Appointments.AddAsync(appointment);
             await _databaseContext.SaveChangesAsync();
@@ -152,7 +153,7 @@ namespace advent_appointment_booking.Services
                     .Include(a => a.TruckingCompany)  // Include the related TruckingCompany entity
                     .Include(a => a.Terminal)         // Include the related Terminal entity
                     .Include(a => a.Driver)           // Include the related Driver entity
-                    .Where(app => app.TerminalId == Convert.ToInt32(userId)).ToListAsync();
+                    .Where(app => app.TerminalId == Convert.ToInt32(userId) && app.AppointmentStatus != AppointmentStatus.Canceled).ToListAsync();
             }
 
             return data.Select(a => new CreateAppointmentDTO
@@ -203,7 +204,7 @@ namespace advent_appointment_booking.Services
             if (appointment == null)
                 throw new Exception("Appointment not found.");
 
-            appointment.AppointmentStatus = "Canceled";
+            appointment.AppointmentStatus = AppointmentStatus.Canceled;
 
             _databaseContext.Appointments.Update(appointment);
             await _databaseContext.SaveChangesAsync();
@@ -218,13 +219,12 @@ namespace advent_appointment_booking.Services
                 throw new Exception("Appointment not found.");
 
             // Update the status to 'Approved'
-            appointment.AppointmentStatus = "Approved";
+            appointment.AppointmentStatus = AppointmentStatus.Approved;
 
             _databaseContext.Appointments.Update(appointment);
             await _databaseContext.SaveChangesAsync();
 
             return "Appointment approved successfully.";
         }
-
     }
 }
