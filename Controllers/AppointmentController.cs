@@ -128,46 +128,48 @@ namespace advent_appointment_booking.Controllers
 
                 // Set headers
                 worksheet.Cells[1, 1].Value = "Port Name";
-                worksheet.Cells[1, 2].Value = "Address";
-                worksheet.Cells[1, 3].Value = "City";
-                worksheet.Cells[1, 4].Value = "State";
-                worksheet.Cells[1, 5].Value = "Country";
-                worksheet.Cells[1, 6].Value = "Trucking Company Name";
-                worksheet.Cells[1, 7].Value = "GST No";
-                worksheet.Cells[1, 8].Value = "Transport License No";
-                worksheet.Cells[1, 9].Value = "Move Type"; // Fixed missing column index
-                worksheet.Cells[1, 10].Value = "Container Number";
-                worksheet.Cells[1, 11].Value = "Size Type";
-                worksheet.Cells[1, 12].Value = "Line";
-                worksheet.Cells[1, 13].Value = "Chassis No";
-                worksheet.Cells[1, 14].Value = "Driver Name";
-                worksheet.Cells[1, 15].Value = "Plate No";
-                worksheet.Cells[1, 16].Value = "Phone Number";
-                worksheet.Cells[1, 17].Value = "Appointment Status";
-                worksheet.Cells[1, 18].Value = "Gate Code";
+                worksheet.Cells[1, 2].Value = "Terminal Name";
+                worksheet.Cells[1, 3].Value = "Address";
+                worksheet.Cells[1, 4].Value = "City";
+                worksheet.Cells[1, 5].Value = "State";
+                worksheet.Cells[1, 6].Value = "Country";
+                worksheet.Cells[1, 7].Value = "Trucking Company Name";
+                worksheet.Cells[1, 8].Value = "GST No";
+                worksheet.Cells[1, 9].Value = "Transport License No";
+                worksheet.Cells[1, 10].Value = "Move Type"; // Fixed missing column index
+                worksheet.Cells[1, 11].Value = "Container Number";
+                worksheet.Cells[1, 12].Value = "Size Type";
+                worksheet.Cells[1, 13].Value = "Line";
+                worksheet.Cells[1, 14].Value = "Chassis No";
+                worksheet.Cells[1, 15].Value = "Driver Name";
+                worksheet.Cells[1, 16].Value = "Plate No";
+                worksheet.Cells[1, 17].Value = "Phone Number";
+                worksheet.Cells[1, 18].Value = "Appointment Status";
+                worksheet.Cells[1, 19].Value = "Gate Code";
 
                 // Add rows for each appointment
                 int row = 2;
                 foreach (var appointment in appointments)
                 {
                     worksheet.Cells[row, 1].Value = appointment.PortName;
-                    worksheet.Cells[row, 2].Value = appointment.Address;
-                    worksheet.Cells[row, 3].Value = appointment.City;
-                    worksheet.Cells[row, 4].Value = appointment.State;
-                    worksheet.Cells[row, 5].Value = appointment.Country;
-                    worksheet.Cells[row, 6].Value = appointment.TrCompanyName;
-                    worksheet.Cells[row, 7].Value = appointment.GstNo;
-                    worksheet.Cells[row, 8].Value = appointment.TransportLicNo;
-                    worksheet.Cells[row, 9].Value = appointment.MoveType; // Fixed missing column index
-                    worksheet.Cells[row, 10].Value = appointment.ContainerNumber;
-                    worksheet.Cells[row, 11].Value = appointment.SizeType;
-                    worksheet.Cells[row, 12].Value = appointment.Line;
-                    worksheet.Cells[row, 13].Value = appointment.ChassisNo;
-                    worksheet.Cells[row, 14].Value = appointment.DriverName;
-                    worksheet.Cells[row, 15].Value = appointment.PlateNo;
-                    worksheet.Cells[row, 16].Value = appointment.PhoneNumber;
-                    worksheet.Cells[row, 17].Value = appointment.AppointmentStatus;
-                    worksheet.Cells[row, 18].Value = appointment.GateCode;
+                    worksheet.Cells[row, 2].Value = appointment.TerminalName;
+                    worksheet.Cells[row, 3].Value = appointment.Address;
+                    worksheet.Cells[row, 4].Value = appointment.City;
+                    worksheet.Cells[row, 5].Value = appointment.State;
+                    worksheet.Cells[row, 6].Value = appointment.Country;
+                    worksheet.Cells[row, 7].Value = appointment.TrCompanyName;
+                    worksheet.Cells[row, 8].Value = appointment.GstNo;
+                    worksheet.Cells[row, 9].Value = appointment.TransportLicNo;
+                    worksheet.Cells[row, 10].Value = appointment.MoveType; // Fixed missing column index
+                    worksheet.Cells[row, 11].Value = appointment.ContainerNumber;
+                    worksheet.Cells[row, 12].Value = appointment.SizeType;
+                    worksheet.Cells[row, 13].Value = appointment.Line;
+                    worksheet.Cells[row, 14].Value = appointment.ChassisNo;
+                    worksheet.Cells[row, 15].Value = appointment.DriverName;
+                    worksheet.Cells[row, 16].Value = appointment.PlateNo;
+                    worksheet.Cells[row, 17].Value = appointment.PhoneNumber;
+                    worksheet.Cells[row, 18].Value = appointment.AppointmentStatus;
+                    worksheet.Cells[row, 19].Value = appointment.GateCode;
 
                     row++;
                 }

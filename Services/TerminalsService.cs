@@ -18,7 +18,7 @@ namespace advent_appointment_booking.Services
 
             if(data != null)
             {
-                return data.Select(terminal => new TerminalsDTO { TerminalId = terminal.TerminalId, PortName =  terminal.PortName });    
+                return data.Select(terminal => new TerminalsDTO { TerminalId = terminal.TerminalId, PortName =  terminal.PortName, TerminalName = terminal.TerminalName });    
             }
             else
             {

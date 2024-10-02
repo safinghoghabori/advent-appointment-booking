@@ -56,6 +56,7 @@ namespace advent_appointment_booking.Services
                 GstNo = truckingCompany.GstNo,
                 TransportLicNo = truckingCompany.TransportLicNo,
                 PortName = terminal.PortName,
+                TerminalName = terminal.TerminalName,
                 Address = terminal.Address,
                 City = terminal.City,
                 State = terminal.State,
@@ -118,6 +119,7 @@ namespace advent_appointment_booking.Services
                     a.TruckingCompany.GstNo,
                     a.TruckingCompany.TransportLicNo,
                     a.Terminal.PortName,
+                    a.Terminal.TerminalName,
                     a.Terminal.City,
                     a.Terminal.State,
                     a.Terminal.Country,
@@ -160,6 +162,7 @@ namespace advent_appointment_booking.Services
                 {
                     AppointmentId = a.AppointmentId,
                     PortName = a.Terminal.PortName,
+                    TerminalName = a.Terminal.TerminalName,
                     Address = a.Terminal.Address,
                     City = a.Terminal.City,
                     State = a.Terminal.State,
