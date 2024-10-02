@@ -254,5 +254,19 @@ namespace advent_appointment_booking.Controllers
             }
         }
 
+        [HttpPut("update-appointment/{appointmentId}")]
+        [Authorize(Policy = Policy.RequireTruckingCompanyRole)]
+        public async Task<IActionResult> UpdateAppointmentDateTime(int appointmentId, [FromBody] UpdateAppointmentDateTimeDto updatedAppointment)
+        {
+            try
+            {
+                var res = await _appointmentService.UpdateAppointmentDateTime(appointmentId, updatedAppointment);
+                return Ok(new { message = res });
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

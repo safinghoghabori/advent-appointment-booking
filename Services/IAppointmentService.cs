@@ -13,5 +13,6 @@ namespace advent_appointment_booking.Services
         Task<string> CancelAppointment(int appointmentId);
         Task<string> ApproveAppointment(int appointmentId);
         Task<List<string>> GetAvailableTimeSlots(int trCompanyId, DateOnly date);
+        Task<string> UpdateAppointmentDateTime(int appointmentId, UpdateAppointmentDateTimeDto updatedAppointment);
     }
 }

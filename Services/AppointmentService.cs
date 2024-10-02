@@ -251,5 +251,21 @@ namespace advent_appointment_booking.Services
             var availableTimeSlots = allTimeSlots.Except(existingAppointmentsTimeSlots).ToList();
             return availableTimeSlots;
         }
+
+        public async Task<string> UpdateAppointmentDateTime(int appointmentId, UpdateAppointmentDateTimeDto updatedAppointment)
+        {
+            var appointment = await _databaseContext.Appointments.FindAsync(appointmentId);
+            if(appointment == null)
+            {
+                throw new Exception("Appointment not found.");
+            }
+
+            appointment.AppointmentDate = updatedAppointment.AppointmentDate;
+            appointment.TimeSlot = updatedAppointment.TimeSlot;
+
+            _databaseContext.Appointments.Update(appointment);
+            await _databaseContext.SaveChangesAsync();
+            return "Appointment updated successfully.";
+        }
     }
 }
