@@ -69,6 +69,8 @@ namespace advent_appointment_booking.Services
                 SizeType = appointment.SizeType,
                 Line = appointment.Line,
                 ChassisNo = appointment.ChassisNo,
+                AppointmentDate = appointment.AppointmentDate,
+                TimeSlot = appointment.TimeSlot,
                 AppointmentStatus = appointment.AppointmentStatus,
                 AppointmentCreated = appointment.AppointmentCreated,
                 AppointmentValidThrough = appointment.AppointmentValidThrough,
@@ -178,6 +180,8 @@ namespace advent_appointment_booking.Services
                     DriverName = a.Driver.DriverName,
                     PlateNo = a.Driver.PlateNo,
                     PhoneNumber = a.Driver.PhoneNumber,
+                    AppointmentDate = a.AppointmentDate,
+                    TimeSlot = a.TimeSlot,
                     AppointmentStatus = a.AppointmentStatus,
                     AppointmentCreated = a.AppointmentCreated,
                     AppointmentValidThrough = a.AppointmentValidThrough,
@@ -228,6 +232,24 @@ namespace advent_appointment_booking.Services
             await _databaseContext.SaveChangesAsync();
 
             return "Appointment approved successfully.";
+        }
+
+        public async Task<List<string>> GetAvailableTimeSlots(int trCompanyId, DateOnly date)
+        {
+            var existingAppointmentsTimeSlots = await _databaseContext.Appointments
+                .Where(a => a.TrCompanyId == trCompanyId && a.AppointmentDate == date)
+                .Select(a => a.TimeSlot)
+                .ToListAsync();
+
+            var allTimeSlots = new List<string>
+            {
+                "9:00 AM - 10:00 AM", "10:00 AM - 11:00 AM", "11:00 AM - 12:00 PM",
+                "12:00 PM - 1:00 PM", "1:00 PM - 2:00 PM", "2:00 PM - 3:00 PM",
+                "3:00 PM - 4:00 PM", "4:00 PM - 5:00 PM", "5:00 PM - 6:00 PM"
+            };
+
+            var availableTimeSlots = allTimeSlots.Except(existingAppointmentsTimeSlots).ToList();
+            return availableTimeSlots;
         }
     }
 }

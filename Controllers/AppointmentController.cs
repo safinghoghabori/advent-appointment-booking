@@ -239,5 +239,20 @@ namespace advent_appointment_booking.Controllers
             }
         }
 
+        [HttpGet("available-timeslots/{date}")]
+        [Authorize(Policy=Policy.RequireTruckingCompanyRole)]
+        public async Task<IActionResult> GetAvailableTimeSlots(DateOnly date, [FromQuery] int trCompanyId)
+        {
+            try
+            {
+                var timeSlots = await _appointmentService.GetAvailableTimeSlots(trCompanyId, date);
+                return Ok(timeSlots);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new {message = ex.Message});
+            }
+        }
+
     }
 }

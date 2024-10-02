@@ -28,6 +28,10 @@ namespace advent_appointment_booking.Models
         public string Line { get; set; }
         public string? ChassisNo { get; set; }
         public string? AppointmentStatus { get; set; }
+        [Required]
+        public DateOnly AppointmentDate { get; set; }
+        [Required]
+        public string TimeSlot { get; set; }
         
         public DateTime AppointmentCreated { get; set; }
         public DateTime AppointmentValidThrough { get; set; }

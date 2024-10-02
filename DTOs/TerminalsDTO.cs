@@ -4,7 +4,6 @@
     {
         public int TerminalId { get; set; }
         public string PortName { get; set; }
-
         public string TerminalName { get; set; }
     }
 }
