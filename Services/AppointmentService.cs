@@ -116,6 +116,8 @@ namespace advent_appointment_booking.Services
                     a.AppointmentCreated,
                     a.AppointmentStatus,
                     a.AppointmentValidThrough,
+                    a.AppointmentDate,
+                    a.TimeSlot,
                     a.TruckingCompany.TrCompanyName,
                     a.TruckingCompany.Email,
                     a.TruckingCompany.GstNo,
