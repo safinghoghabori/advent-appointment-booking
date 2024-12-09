@@ -17,7 +17,7 @@ namespace advent_appointment_booking.Services
         }
 
         // Create a new driver with a check for existing plate number and phone number
-        public async Task<Driver> CreateDriver(Driver driver)
+        public async Task<string> CreateDriver(Driver driver)
         {
             // Check if the TruckingCompany exists
             var truckingCompany = await _context.TruckingCompanies
@@ -50,7 +50,7 @@ namespace advent_appointment_booking.Services
             // Proceed to add the driver if all validations pass
             _context.Drivers.Add(driver);
             await _context.SaveChangesAsync();
-            return driver;
+            return "Driver created successfully.";
         }
 
 
@@ -89,9 +89,10 @@ namespace advent_appointment_booking.Services
             return driverDto;
         }
 
-        public async Task<IEnumerable<DriverDTO>> GetAllDrivers()
+        public async Task<IEnumerable<DriverDTO>> GetAllDrivers(int trCompanyId)
         {
             var drivers = await _context.Drivers
+                .Where(d => d.TrCompanyId == trCompanyId)
                 .Include(d => d.TruckingCompany)
                 .ToListAsync();
 

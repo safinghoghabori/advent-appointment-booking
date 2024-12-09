@@ -1,7 +1,10 @@
-﻿using advent_appointment_booking.Database;
+﻿using advent_appointment_booking.Constants;
+using advent_appointment_booking.Database;
 using advent_appointment_booking.DTOs;
+using advent_appointment_booking.Enums;
 using advent_appointment_booking.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace advent_appointment_booking.Services
 {
@@ -42,7 +45,7 @@ namespace advent_appointment_booking.Services
             appointment.AppointmentCreated = DateTime.UtcNow;
             appointment.AppointmentLastModified = DateTime.UtcNow;
             appointment.AppointmentValidThrough = appointment.AppointmentCreated.AddDays(2);
-            appointment.AppointmentStatus = "Scheduled";
+            appointment.AppointmentStatus = AppointmentStatus.Scheduled;
 
             await _databaseContext.Appointments.AddAsync(appointment);
             await _databaseContext.SaveChangesAsync();
@@ -53,6 +56,7 @@ namespace advent_appointment_booking.Services
                 GstNo = truckingCompany.GstNo,
                 TransportLicNo = truckingCompany.TransportLicNo,
                 PortName = terminal.PortName,
+                TerminalName = terminal.TerminalName,
                 Address = terminal.Address,
                 City = terminal.City,
                 State = terminal.State,
@@ -65,6 +69,8 @@ namespace advent_appointment_booking.Services
                 SizeType = appointment.SizeType,
                 Line = appointment.Line,
                 ChassisNo = appointment.ChassisNo,
+                AppointmentDate = appointment.AppointmentDate,
+                TimeSlot = appointment.TimeSlot,
                 AppointmentStatus = appointment.AppointmentStatus,
                 AppointmentCreated = appointment.AppointmentCreated,
                 AppointmentValidThrough = appointment.AppointmentValidThrough,
@@ -110,11 +116,14 @@ namespace advent_appointment_booking.Services
                     a.AppointmentCreated,
                     a.AppointmentStatus,
                     a.AppointmentValidThrough,
+                    a.AppointmentDate,
+                    a.TimeSlot,
                     a.TruckingCompany.TrCompanyName,
                     a.TruckingCompany.Email,
                     a.TruckingCompany.GstNo,
                     a.TruckingCompany.TransportLicNo,
                     a.Terminal.PortName,
+                    a.Terminal.TerminalName,
                     a.Terminal.City,
                     a.Terminal.State,
                     a.Terminal.Country,
@@ -132,12 +141,32 @@ namespace advent_appointment_booking.Services
         }
 
         // Get All Appointments (Accessible to both Trucking Company and Terminal)
-        public async Task<IEnumerable<CreateAppointmentDTO>> GetAppointments()
+        public async Task<IEnumerable<CreateAppointmentDTO>> GetAppointments(string userId, string role)
         {
-            return await _databaseContext.Appointments
-                .Select(a => new CreateAppointmentDTO
+            var data = new List<Appointment>();
+
+            if (role == UserType.TruckingCompany)
+            {
+                data = await _databaseContext.Appointments
+                    .Include(a => a.TruckingCompany)  // Include the related TruckingCompany entity
+                    .Include(a => a.Terminal)         // Include the related Terminal entity
+                    .Include(a => a.Driver)           // Include the related Driver entity
+                    .Where(app => app.TrCompanyId == Convert.ToInt32(userId)).ToListAsync();
+            }
+            else if(role == UserType.Terminal)
+            {
+                data = await _databaseContext.Appointments
+                    .Include(a => a.TruckingCompany)  // Include the related TruckingCompany entity
+                    .Include(a => a.Terminal)         // Include the related Terminal entity
+                    .Include(a => a.Driver)           // Include the related Driver entity
+                    .Where(app => app.TerminalId == Convert.ToInt32(userId) && app.AppointmentStatus != AppointmentStatus.Canceled).ToListAsync();
+            }
+
+            return data.Select(a => new CreateAppointmentDTO
                 {
+                    AppointmentId = a.AppointmentId,
                     PortName = a.Terminal.PortName,
+                    TerminalName = a.Terminal.TerminalName,
                     Address = a.Terminal.Address,
                     City = a.Terminal.City,
                     State = a.Terminal.State,
@@ -153,13 +182,15 @@ namespace advent_appointment_booking.Services
                     DriverName = a.Driver.DriverName,
                     PlateNo = a.Driver.PlateNo,
                     PhoneNumber = a.Driver.PhoneNumber,
+                    AppointmentDate = a.AppointmentDate,
+                    TimeSlot = a.TimeSlot,
                     AppointmentStatus = a.AppointmentStatus,
                     AppointmentCreated = a.AppointmentCreated,
                     AppointmentValidThrough = a.AppointmentValidThrough,
                     AppointmentLastModified = a.AppointmentLastModified,
                     GateCode = a.GateCode
                 })
-                .ToListAsync();
+                .ToList();
         }
 
         // Delete Appointment (Trucking Company only)
@@ -182,7 +213,7 @@ namespace advent_appointment_booking.Services
             if (appointment == null)
                 throw new Exception("Appointment not found.");
 
-            appointment.AppointmentStatus = "Canceled";
+            appointment.AppointmentStatus = AppointmentStatus.Canceled;
 
             _databaseContext.Appointments.Update(appointment);
             await _databaseContext.SaveChangesAsync();
@@ -197,7 +228,7 @@ namespace advent_appointment_booking.Services
                 throw new Exception("Appointment not found.");
 
             // Update the status to 'Approved'
-            appointment.AppointmentStatus = "Approved";
+            appointment.AppointmentStatus = AppointmentStatus.Approved;
 
             _databaseContext.Appointments.Update(appointment);
             await _databaseContext.SaveChangesAsync();
@@ -205,5 +236,38 @@ namespace advent_appointment_booking.Services
             return "Appointment approved successfully.";
         }
 
+        public async Task<List<string>> GetAvailableTimeSlots(int trCompanyId, DateOnly date)
+        {
+            var existingAppointmentsTimeSlots = await _databaseContext.Appointments
+                .Where(a => a.TrCompanyId == trCompanyId && a.AppointmentDate == date)
+                .Select(a => a.TimeSlot)
+                .ToListAsync();
+
+            var allTimeSlots = new List<string>
+            {
+                "9:00 AM - 10:00 AM", "10:00 AM - 11:00 AM", "11:00 AM - 12:00 PM",
+                "12:00 PM - 1:00 PM", "1:00 PM - 2:00 PM", "2:00 PM - 3:00 PM",
+                "3:00 PM - 4:00 PM", "4:00 PM - 5:00 PM", "5:00 PM - 6:00 PM"
+            };
+
+            var availableTimeSlots = allTimeSlots.Except(existingAppointmentsTimeSlots).ToList();
+            return availableTimeSlots;
+        }
+
+        public async Task<string> UpdateAppointmentDateTime(int appointmentId, UpdateAppointmentDateTimeDto updatedAppointment)
+        {
+            var appointment = await _databaseContext.Appointments.FindAsync(appointmentId);
+            if(appointment == null)
+            {
+                throw new Exception("Appointment not found.");
+            }
+
+            appointment.AppointmentDate = updatedAppointment.AppointmentDate;
+            appointment.TimeSlot = updatedAppointment.TimeSlot;
+
+            _databaseContext.Appointments.Update(appointment);
+            await _databaseContext.SaveChangesAsync();
+            return "Appointment updated successfully.";
+        }
     }
 }

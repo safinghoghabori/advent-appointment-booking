@@ -10,8 +10,12 @@ namespace advent_appointment_booking.Models
         public int TerminalId { get; set; }
 
         [Required]
-        [MaxLength(200)]
+        [MaxLength(100)]
         public string PortName { get; set; }
+
+        [Required]
+        [MaxLength(100)]
+        public string TerminalName { get; set; }
 
         [Required]
         [MaxLength(500)]

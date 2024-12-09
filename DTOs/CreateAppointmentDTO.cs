@@ -2,7 +2,9 @@
 {
     public class CreateAppointmentDTO
     {
+        public int AppointmentId { get; set; }
         public string PortName { get; set; }
+        public string TerminalName { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
         public string State { get; set; }
@@ -18,6 +20,8 @@
         public string SizeType { get; set; }
         public string Line { get; set; }
         public string ChassisNo { get; set; }
+        public DateOnly AppointmentDate { get; set; }
+        public string TimeSlot { get; set; }
         public string AppointmentStatus { get; set; }
         public DateTime AppointmentCreated { get; set; }
         public DateTime AppointmentValidThrough { get; set; }

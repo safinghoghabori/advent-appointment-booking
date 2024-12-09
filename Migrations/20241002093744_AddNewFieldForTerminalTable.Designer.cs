@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using advent_appointment_booking.Database;
 
@@ -11,9 +12,11 @@ using advent_appointment_booking.Database;
 namespace advent_appointment_booking.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241002093744_AddNewFieldForTerminalTable")]
+    partial class AddNewFieldForTerminalTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,9 +35,6 @@ namespace advent_appointment_booking.Migrations
 
                     b.Property<DateTime>("AppointmentCreated")
                         .HasColumnType("datetime2");
-
-                    b.Property<DateOnly>("AppointmentDate")
-                        .HasColumnType("date");
 
                     b.Property<DateTime>("AppointmentLastModified")
                         .HasColumnType("datetime2");
@@ -72,10 +72,6 @@ namespace advent_appointment_booking.Migrations
 
                     b.Property<int>("TerminalId")
                         .HasColumnType("int");
-
-                    b.Property<string>("TimeSlot")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TrCompanyId")
                         .HasColumnType("int");
