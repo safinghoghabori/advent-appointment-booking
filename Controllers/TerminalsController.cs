@@ -1,7 +1,6 @@
 ﻿using advent_appointment_booking.Enums;
 using advent_appointment_booking.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace advent_appointment_booking.Controllers
@@ -12,8 +11,8 @@ namespace advent_appointment_booking.Controllers
     {
         private readonly ITerminalsService _terminalsService;
 
-        public TerminalsController(ITerminalsService terminalsService) 
-        { 
+        public TerminalsController(ITerminalsService terminalsService)
+        {
             _terminalsService = terminalsService;
         }
 
@@ -26,9 +25,9 @@ namespace advent_appointment_booking.Controllers
                 var result = await _terminalsService.GetTerminalsAsync();
                 return Ok(result);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });    
+                return BadRequest(new { message = ex.Message });
             }
         }
     }
